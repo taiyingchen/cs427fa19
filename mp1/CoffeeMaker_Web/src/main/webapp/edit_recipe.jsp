@@ -54,19 +54,19 @@
 <form method="post" action="edit_recipe.jsp">
 <table>
 <tr>
-<td><input type="text" name="price"></td><td><span class="font1">Recipe Price (integer)</span></td>
+<td><input type="text" name="price" value="<%= cm.getRecipes()[recipeNum].getPrice() %>"></td><td><span class="font1">Recipe Price (integer)</span></td>
 </tr>
 <tr>
-<td><input type="text" name="amtCoffee"></td><td><span class="font1">Units Coffee</span></td>
+<td><input type="text" name="amtCoffee" value="<%= cm.getRecipes()[recipeNum].getAmtCoffee() %>"></td><td><span class="font1">Units Coffee</span></td>
 </tr>
 <tr>
-<td><input type="text" name="amtMilk"></td><td><span class="font1">Units Milk</span></td>
+<td><input type="text" name="amtMilk" value="<%= cm.getRecipes()[recipeNum].getAmtMilk() %>"></td><td><span class="font1">Units Milk</span></td>
 </tr>
 <tr>
-<td><input type="text" name="amtSugar"></td><td><span class="font1">Units Sugar</span></td>
+<td><input type="text" name="amtSugar" value="<%= cm.getRecipes()[recipeNum].getAmtSugar() %>"></td><td><span class="font1">Units Sugar</span></td>
 </tr>
 <tr>
-<td><input type="text" name="amtChocolate"></td><td><span class="font1">Units Chocolate</span></td>
+<td><input type="text" name="amtChocolate" value="<%= cm.getRecipes()[recipeNum].getAmtChocolate() %>"></td><td><span class="font1">Units Chocolate</span></td>
 </tr>
 </table>
 <input type="submit" value="Edit Recipe!">
