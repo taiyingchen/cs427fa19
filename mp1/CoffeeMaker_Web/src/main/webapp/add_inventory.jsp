@@ -15,13 +15,13 @@
     <%
         ; // TODO: MP1: complete the AddInventory user story
 	    //Read in amt coffee
-	    String coffeeString = request.getParameter("amtCoffee");
+        String coffeeString = request.getParameter("amtCoffee");
 	    //Read in amt milk
-	    String milkString = request.getParameter("amtMilk");
+        String milkString = request.getParameter("amtMilk");
 	    //Read in amt sugar
-	    String sugarString = request.getParameter("amtSugar");
+        String sugarString = request.getParameter("amtSugar");
 	    //Read in amt chocolate
-	    String chocolateString = request.getParameter("amtChocolate");
+        String chocolateString = request.getParameter("amtChocolate");
 
         CoffeeMaker cm = (CoffeeMaker)session.getAttribute("cm");
         
