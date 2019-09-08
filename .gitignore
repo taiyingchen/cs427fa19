@@ -1,5 +1,11 @@
 # Directory
-mp1/CoffeeMaker_Web/target/
+target/
+
 
 # File extension
 *.class
+
+# File
+.classpath
+.project
+.settings
