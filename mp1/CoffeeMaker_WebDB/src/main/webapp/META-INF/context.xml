@@ -20,8 +20,8 @@
 		   before beginning this tutorial to ensure the database is properly created.
 		-->
 	<Resource
-		username="root"
-		password=""
+		username="cs427"
+		password="mypassword"
 		url="jdbc:mysql://localhost:3306/tutorials?createDatabaseIfNotExist=true"		
 		name="jdbc/coffeemaker"
 		auth="Container"

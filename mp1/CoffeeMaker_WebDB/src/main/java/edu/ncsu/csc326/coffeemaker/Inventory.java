@@ -1,5 +1,6 @@
 package edu.ncsu.csc326.coffeemaker;
 
+import edu.ncsu.csc326.coffeemaker.db.InventoryDB;
 import edu.ncsu.csc326.coffeemaker.exceptions.InventoryException;
 
 /**
@@ -9,10 +10,10 @@ import edu.ncsu.csc326.coffeemaker.exceptions.InventoryException;
  */
 public class Inventory {
     
-    private static int coffee;
-    private static int milk;
-    private static int sugar;
-    private static int chocolate;
+    // private static int coffee;
+    // private static int milk;
+    // private static int sugar;
+    // private static int chocolate;
     
     /**
      * Creates a coffee maker inventory object and
@@ -31,7 +32,7 @@ public class Inventory {
      * @return int
      */
     public int getChocolate() {
-        return chocolate;
+        return InventoryDB.checkInventory("chocolate");
     }
     
     /**
@@ -41,7 +42,8 @@ public class Inventory {
      */
     public synchronized void setChocolate(int chocolate) {
     	if(chocolate >= 0) {
-    		Inventory.chocolate = chocolate;
+            InventoryDB.resetInventory("chocolate");
+    		InventoryDB.addInventory(0, 0, 0, chocolate);
     	}
         
     }
@@ -60,7 +62,7 @@ public class Inventory {
     		throw new InventoryException("Units of chocolate must be a positive integer");
     	}
 		if (amtChocolate >= 0) {
-			Inventory.chocolate += amtChocolate;
+            InventoryDB.addInventory(0, 0, 0, amtChocolate);
 		} else {
 			throw new InventoryException("Units of chocolate must be a positive integer");
 		}
@@ -72,7 +74,7 @@ public class Inventory {
      * @return int
      */
     public int getCoffee() {
-        return coffee;
+        return InventoryDB.checkInventory("coffee");
     }
     
     /**
@@ -82,7 +84,8 @@ public class Inventory {
      */
     public synchronized void setCoffee(int coffee) {
     	if(coffee >= 0) {
-    		Inventory.coffee = coffee;
+            InventoryDB.resetInventory("coffee");
+            InventoryDB.addInventory(coffee, 0, 0, 0);
     	}
     }
     
@@ -100,7 +103,7 @@ public class Inventory {
     		throw new InventoryException("Units of coffee must be a positive integer");
     	}
 		if (amtCoffee >= 0) {
-			Inventory.coffee += amtCoffee;
+            InventoryDB.addInventory(amtCoffee, 0, 0, 0);
 		} else {
 			throw new InventoryException("Units of coffee must be a positive integer");
 		}
@@ -112,7 +115,7 @@ public class Inventory {
      * @return int
      */
     public int getMilk() {
-        return milk;
+        return InventoryDB.checkInventory("milk");
     }
     
     /**
@@ -122,7 +125,8 @@ public class Inventory {
      */
     public synchronized void setMilk(int milk) {
     	if(milk >= 0) {
-    		Inventory.milk = milk;
+            InventoryDB.resetInventory("milk");
+            InventoryDB.addInventory(0, milk, 0, 0);
     	}
     }
     
@@ -140,7 +144,7 @@ public class Inventory {
     		throw new InventoryException("Units of milk must be a positive integer");
     	}
 		if (amtMilk >= 0) {
-			Inventory.milk += amtMilk;
+            InventoryDB.addInventory(0, amtMilk, 0, 0);
 		} else {
 			throw new InventoryException("Units of milk must be a positive integer");
 		}
@@ -152,7 +156,7 @@ public class Inventory {
      * @return int
      */
     public int getSugar() {
-        return sugar;
+        return InventoryDB.checkInventory("sugar");
     }
     
     /**
@@ -162,7 +166,8 @@ public class Inventory {
      */
     public synchronized void setSugar(int sugar) {
     	if(sugar >= 0) {
-    		Inventory.sugar = sugar;
+            InventoryDB.resetInventory("sugar");
+            InventoryDB.addInventory(0, 0, sugar, 0);
     	}
     }
     
@@ -180,7 +185,7 @@ public class Inventory {
     		throw new InventoryException("Units of sugar must be a positive integer");
     	}
 		if (amtSugar >= 0) { 
-			Inventory.sugar += amtSugar;
+            InventoryDB.addInventory(0, 0, amtSugar, 0);
 		} else {
 			throw new InventoryException("Units of sugar must be a positive integer");
 		}
@@ -194,16 +199,16 @@ public class Inventory {
      */
     protected synchronized boolean enoughIngredients(Recipe r) {
         boolean isEnough = true;
-        if(Inventory.coffee < r.getAmtCoffee()) {
+        if(InventoryDB.checkInventory("coffee") < r.getAmtCoffee()) {
             isEnough = false;
         }
-        if(Inventory.milk < r.getAmtMilk()) {
+        if(InventoryDB.checkInventory("milk") < r.getAmtMilk()) {
             isEnough = false;
         }
-        if(Inventory.sugar < r.getAmtSugar()) {
+        if(InventoryDB.checkInventory("sugar") < r.getAmtSugar()) {
             isEnough = false;
         }
-        if(Inventory.chocolate < r.getAmtChocolate()) {
+        if(InventoryDB.checkInventory("chocolate") < r.getAmtChocolate()) {
             isEnough = false;
         }
         return isEnough;
@@ -217,10 +222,7 @@ public class Inventory {
      */
     public synchronized boolean useIngredients(Recipe r) {
     	if (enoughIngredients(r)) {
-	    	Inventory.coffee -= r.getAmtCoffee();
-	    	Inventory.milk -= r.getAmtMilk();
-	    	Inventory.sugar -= r.getAmtSugar();
-	    	Inventory.chocolate -= r.getAmtChocolate();
+            InventoryDB.useInventory(r.getAmtCoffee(), r.getAmtMilk(), r.getAmtSugar(), r.getAmtChocolate());
 	    	return true;
     	} else {
     		return false;

@@ -14,6 +14,25 @@
     <h3>Add a Inventory</h3>
     <%
         ; // TODO: MP1: complete the AddInventory user story
+	    //Read in amt coffee
+        String coffeeString = request.getParameter("amtCoffee");
+	    //Read in amt milk
+        String milkString = request.getParameter("amtMilk");
+	    //Read in amt sugar
+        String sugarString = request.getParameter("amtSugar");
+	    //Read in amt chocolate
+        String chocolateString = request.getParameter("amtChocolate");
+
+        CoffeeMaker cm = (CoffeeMaker)session.getAttribute("cm");
+        
+        if (coffeeString != null && !"null".equals(coffeeString)) {
+            try {
+                cm.addInventory(coffeeString, milkString, sugarString, chocolateString);
+                out.println("<span class=\"font_success\">successfully added.</span><br>");
+            } catch (InventoryException e) {
+                out.println("<span class=\"font_failure\">Inventory was not added</span><br>");
+            }
+        }
     %>
     <br>
     <form method="post" action="add_inventory.jsp">
