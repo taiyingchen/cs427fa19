@@ -48,8 +48,8 @@ public class MacronutrientsDAOTest extends TestCase {
 				
 		try {
 			MacronutrientsBean macronutrients = macronutrientsDAO.getMsj(341);
-			assertTrue(1336.25 == 1336.25);
-			assertEquals(40, 40);
+			assertEquals(1316.25, macronutrients.getMsj());
+			assertEquals(44, macronutrients.getYears());
 		} catch (DBException e) {
 			
 			e.printStackTrace();
