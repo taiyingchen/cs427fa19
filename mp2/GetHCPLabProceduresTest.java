@@ -17,12 +17,13 @@ public class GetHCPLabProceduresTest extends TestCase {
 	protected void setUp() throws Exception {
 		gen = new TestDataGenerator();
 		gen.clearAllTables();
-		gen.labProcedures();
+		gen.officeVisit7();
 	}
 
 	public void testGetHCPLabProcedures() throws Exception {
-		List<LabProcedureBean> procedures = lpDAO.getHCPLabProcedures(9000000000L);
-        assertEquals(0, procedures.size());
+		List<LabProcedureBean> procedures = lpDAO.getHCPLabProcedures(9000000005L);
+		assertEquals(1, procedures.size());
+		assertEquals("45335-7", procedures.get(0).getLoinc());
 	}
 
 	public void testFailGetHCPLabProcedures() throws Exception {
