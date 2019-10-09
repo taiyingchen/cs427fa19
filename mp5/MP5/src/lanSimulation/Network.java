@@ -177,8 +177,8 @@ public class Network {
 		Node currentNode = firstNode;
 		Packet packet = new Packet("BROADCAST", firstNode.name, firstNode.name);
 		do {
-			printLogging(report, currentNode, "' accepts broadcast packet.\n");
-			printLogging(report, currentNode, "' passes packet on.\n");
+			currentNode.printLogging(report, "' accepts broadcast packet.\n");
+			currentNode.printLogging(report, "' passes packet on.\n");
 
 			currentNode = currentNode.nextNode;
 		} while (!packet.destination.equals(currentNode.name));
@@ -228,7 +228,7 @@ public class Network {
 
 		return checkDestination(workstation, document, printer, report);
 	}
-	
+
 	private boolean checkDestination(String workstation, String document, String printer, Writer report) {
 		boolean result = false;
 		Node startNode, currentNode;
@@ -236,18 +236,18 @@ public class Network {
 
 		startNode = workstations.get(workstation);
 
-		printLogging(report, startNode, "' passes packet on.\n");
+		startNode.printLogging(report, "' passes packet on.\n");
 
 		currentNode = startNode.nextNode;
 		while ((!packet.destination.equals(currentNode.name))
 				& (!packet.origin.equals(currentNode.name))) {
-			printLogging(report, currentNode, "' passes packet on.\n");
+			currentNode.printLogging(report, "' passes packet on.\n");
 
 			currentNode = currentNode.nextNode;
 		}
 
 		if (packet.destination.equals(currentNode.name)) {
-			result = printDocument(currentNode, packet, report);
+			result = packet.printDocument(currentNode, report);
 		} else {
 			try {
 				report.write(">>> Destination not found, print job canceled.\n\n");
@@ -259,81 +259,6 @@ public class Network {
 			result = false;
 		}
 		return result;
-	}
-
-	private void printLogging(Writer report, Node startNode, String s) {
-		try {
-			report.write("\tNode '");
-			report.write(startNode.name);
-			report.write(s);
-			report.flush();
-		} catch (IOException exc) {
-			// just ignore
-		}
-	}
-
-	private boolean printDocument(Node printer, Packet document, Writer report) {
-		String author = "Unknown";
-		String title = "Untitled";
-		int startPos = 0, endPos = 0;
-
-		if (printer.type == Node.PRINTER) {
-			try {
-				if (document.message.startsWith("!PS")) {
-					startPos = document.message.indexOf("author:");
-					if (startPos >= 0) {
-						endPos = document.message.indexOf(".", startPos + 7);
-						if (endPos < 0) {
-							endPos = document.message.length();
-						}
-
-						author = document.message.substring(startPos + 7,
-								endPos);
-					}
-
-					startPos = document.message.indexOf("title:");
-					if (startPos >= 0) {
-						endPos = document.message.indexOf(".", startPos + 6);
-						if (endPos < 0) {
-							endPos = document.message.length();
-						}
-						title = document.message
-								.substring(startPos + 6, endPos);
-					}
-
-					printAccounting(report, author, title, ">>> Postscript job delivered.\n\n");
-				} else {
-					title = "ASCII DOCUMENT";
-					if (document.message.length() >= 16) {
-						author = document.message.substring(8, 16);
-					}
-
-					printAccounting(report, author, title, ">>> ASCII Print job delivered.\n\n");
-				}
-
-			} catch (IOException exc) {
-				// just ignore
-			}
-			return true;
-		} else {
-			try {
-				report.write(">>> Destination is not a printer, print job canceled.\n\n");
-				report.flush();
-			} catch (IOException exc) {
-				// just ignore
-			}
-			return false;
-		}
-	}
-
-	private void printAccounting(Writer report, String author, String title, String s) throws IOException {
-		report.write("\tAccounting -- author = '");
-		report.write(author);
-		report.write("' -- title = '");
-		report.write(title);
-		report.write("'\n");
-		report.write(s);
-		report.flush();
 	}
 
 	/**

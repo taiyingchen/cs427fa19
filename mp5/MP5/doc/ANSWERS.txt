@@ -81,11 +81,29 @@ Code:
 
 Answer to Q2
 ============
-We found the following code smell(s): <CODE_SMELL_NAME_1>, <CODE_SMELL_NAME_2>...
+We found the following code smell(s): Feature envy
 
 Here are some example(s) of each code smell: 
-(same as Q1)
 
+Name: Feature envy
+
+Example 1: The printLogging method you just extracted does not belong in Network because most of the data it accesses belongs in another class.
+Code: 
+	printLogging(report, currentNode, "' accepts broadcast packet.\n");
+	printLogging(report, currentNode, "' passes packet on.\n");
+
+Example 2: The printDocument method is also one that accesses attributes from two faraway classes, yet does not access its own attributes.
+Code: 
+	startPos = document.message.indexOf("author:");
+	if (startPos >= 0) {
+		endPos = document.message.indexOf(".", startPos + 7);
+		if (endPos < 0) {
+			endPos = document.message.length();
+		}
+
+		author = document.message.substring(startPos + 7,
+				endPos);
+	}
 
 Answer to Q3
 ============

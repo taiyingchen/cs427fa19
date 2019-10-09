@@ -19,6 +19,11 @@
  */
 package lanSimulation.internals;
 
+import lanSimulation.Network;
+
+import java.io.IOException;
+import java.io.Writer;
+
 /**
  * A <em>Packet</em> represents a unit of information to be sent over the Local
  * Area Network (LAN).
@@ -55,4 +60,67 @@ public class Packet {
 		destination = _destination;
 	}
 
+    public boolean printDocument(Node printer, Writer report) {
+        String author = "Unknown";
+        String title = "Untitled";
+        int startPos = 0, endPos = 0;
+
+        if (printer.type == Node.PRINTER) {
+            try {
+                if (message.startsWith("!PS")) {
+                    startPos = message.indexOf("author:");
+                    if (startPos >= 0) {
+                        endPos = message.indexOf(".", startPos + 7);
+                        if (endPos < 0) {
+                            endPos = message.length();
+                        }
+
+                        author = message.substring(startPos + 7,
+                                endPos);
+                    }
+
+                    startPos = message.indexOf("title:");
+                    if (startPos >= 0) {
+                        endPos = message.indexOf(".", startPos + 6);
+                        if (endPos < 0) {
+                            endPos = message.length();
+                        }
+                        title = message
+                                .substring(startPos + 6, endPos);
+                    }
+
+                    printAccounting(report, author, title, ">>> Postscript job delivered.\n\n");
+                } else {
+                    title = "ASCII DOCUMENT";
+                    if (message.length() >= 16) {
+                        author = message.substring(8, 16);
+                    }
+
+                    printAccounting(report, author, title, ">>> ASCII Print job delivered.\n\n");
+                }
+
+            } catch (IOException exc) {
+                // just ignore
+            }
+            return true;
+        } else {
+            try {
+                report.write(">>> Destination is not a printer, print job canceled.\n\n");
+                report.flush();
+            } catch (IOException exc) {
+                // just ignore
+            }
+            return false;
+        }
+    }
+
+    private void printAccounting(Writer report, String author, String title, String s) throws IOException {
+        report.write("\tAccounting -- author = '");
+        report.write(author);
+        report.write("' -- title = '");
+        report.write(title);
+        report.write("'\n");
+        report.write(s);
+        report.flush();
+    }
 }
