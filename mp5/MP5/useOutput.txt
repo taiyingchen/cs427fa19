@@ -1,0 +1,98 @@
+---------------------------------ASCII------------------------------------------
+Workstation Filip [Workstation] -> Node n1 [Node] -> Workstation Hans [Workstation] -> Printer Andy [Printer] ->  ... 
+
+---------------------------------HTML------------------------------------------
+<HTML>
+<HEAD>
+<TITLE>LAN Simulation</TITLE>
+</HEAD>
+<BODY>
+<H1>LAN SIMULATION</H1>
+
+<UL>
+	<LI> Workstation Filip [Workstation] </LI>
+	<LI> Node n1 [Node] </LI>
+	<LI> Workstation Hans [Workstation] </LI>
+	<LI> Printer Andy [Printer] </LI>
+	<LI>...</LI>
+</UL>
+
+</BODY>
+</HTML>
+
+
+---------------------------------XML------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+
+<network>
+	<workstation>Filip</workstation>
+	<node>n1</node>
+	<workstation>Hans</workstation>
+	<printer>Andy</printer>
+</network>
+
+---------------------------------SCENARIO: Print Success --------------------------
+'Filip' requests printing of 'Hello World' on 'Andy' ...
+	Node 'Filip' passes packet on.
+	Node 'n1' passes packet on.
+	Node 'Hans' passes packet on.
+	Accounting -- author = 'Unknown' -- title = 'ASCII DOCUMENT'
+>>> ASCII Print job delivered.
+
+
+
+---------------------------------SCENARIO: PrintFailure (UnkownPrinter) ------------
+'Filip' requests printing of 'Hello World' on 'UnknownPrinter' ...
+	Node 'Filip' passes packet on.
+	Node 'n1' passes packet on.
+	Node 'Hans' passes packet on.
+	Node 'Andy' passes packet on.
+>>> Destination not found, print job canceled.
+
+
+
+---------------------------------SCENARIO: PrintFailure (print on Workstation) -----
+'Filip' requests printing of 'Hello World' on 'Hans' ...
+	Node 'Filip' passes packet on.
+	Node 'n1' passes packet on.
+>>> Destination is not a printer, print job canceled.
+
+
+
+---------------------------------SCENARIO: PrintFailure (print on Node) -----
+'Filip' requests printing of 'Hello World' on 'n1' ...
+	Node 'Filip' passes packet on.
+>>> Destination is not a printer, print job canceled.
+
+
+
+---------------------------------SCENARIO: Print Success Postscript-----------------
+'Filip' requests printing of '!PS Hello World in postscript' on 'Andy' ...
+	Node 'Filip' passes packet on.
+	Node 'n1' passes packet on.
+	Node 'Hans' passes packet on.
+	Accounting -- author = 'Unknown' -- title = 'Untitled'
+>>> Postscript job delivered.
+
+
+
+---------------------------------SCENARIO: Print Failure Postscript-----------------
+'Filip' requests printing of '!PS Hello World in postscript' on 'Hans' ...
+	Node 'Filip' passes packet on.
+	Node 'n1' passes packet on.
+>>> Destination is not a printer, print job canceled.
+
+
+
+---------------------------------SCENARIO: Broadcast Success -----------------
+Broadcast Request
+	Node 'Filip' accepts broadcast packet.
+	Node 'Filip' passes packet on.
+	Node 'n1' accepts broadcast packet.
+	Node 'n1' passes packet on.
+	Node 'Hans' accepts broadcast packet.
+	Node 'Hans' passes packet on.
+	Node 'Andy' accepts broadcast packet.
+	Node 'Andy' passes packet on.
+>>> Broadcast traveled whole token ring.
+
