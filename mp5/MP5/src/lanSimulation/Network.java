@@ -177,17 +177,8 @@ public class Network {
 		Node currentNode = firstNode;
 		Packet packet = new Packet("BROADCAST", firstNode.name, firstNode.name);
 		do {
-			try {
-				report.write("\tNode '");
-				report.write(currentNode.name);
-				report.write("' accepts broadcast packet.\n");
-				report.write("\tNode '");
-				report.write(currentNode.name);
-				report.write("' passes packet on.\n");
-				report.flush();
-			} catch (IOException exc) {
-				// just ignore
-			}
+			printLogging(report, currentNode, "' accepts broadcast packet.\n");
+			printLogging(report, currentNode, "' passes packet on.\n");
 
 			currentNode = currentNode.nextNode;
 		} while (!packet.destination.equals(currentNode.name));
@@ -235,32 +226,22 @@ public class Network {
 			// just ignore
 		}
 
+		return checkDestination(workstation, document, printer, report);
+	}
+	
+	private boolean checkDestination(String workstation, String document, String printer, Writer report) {
 		boolean result = false;
 		Node startNode, currentNode;
 		Packet packet = new Packet(document, workstation, printer);
 
 		startNode = workstations.get(workstation);
 
-		try {
-			report.write("\tNode '");
-			report.write(startNode.name);
-			report.write("' passes packet on.\n");
-			report.flush();
-		} catch (IOException exc) {
-			// just ignore
-		}
+		printLogging(report, startNode, "' passes packet on.\n");
 
 		currentNode = startNode.nextNode;
 		while ((!packet.destination.equals(currentNode.name))
 				& (!packet.origin.equals(currentNode.name))) {
-			try {
-				report.write("\tNode '");
-				report.write(currentNode.name);
-				report.write("' passes packet on.\n");
-				report.flush();
-			} catch (IOException exc) {
-				// just ignore
-			}
+			printLogging(report, currentNode, "' passes packet on.\n");
 
 			currentNode = currentNode.nextNode;
 		}
@@ -277,8 +258,18 @@ public class Network {
 
 			result = false;
 		}
-
 		return result;
+	}
+
+	private void printLogging(Writer report, Node startNode, String s) {
+		try {
+			report.write("\tNode '");
+			report.write(startNode.name);
+			report.write(s);
+			report.flush();
+		} catch (IOException exc) {
+			// just ignore
+		}
 	}
 
 	private boolean printDocument(Node printer, Packet document, Writer report) {
@@ -310,26 +301,14 @@ public class Network {
 								.substring(startPos + 6, endPos);
 					}
 
-					report.write("\tAccounting -- author = '");
-					report.write(author);
-					report.write("' -- title = '");
-					report.write(title);
-					report.write("'\n");
-					report.write(">>> Postscript job delivered.\n\n");
-					report.flush();
+					printAccounting(report, author, title, ">>> Postscript job delivered.\n\n");
 				} else {
 					title = "ASCII DOCUMENT";
 					if (document.message.length() >= 16) {
 						author = document.message.substring(8, 16);
 					}
 
-					report.write("\tAccounting -- author = '");
-					report.write(author);
-					report.write("' -- title = '");
-					report.write(title);
-					report.write("'\n");
-					report.write(">>> ASCII Print job delivered.\n\n");
-					report.flush();
+					printAccounting(report, author, title, ">>> ASCII Print job delivered.\n\n");
 				}
 
 			} catch (IOException exc) {
@@ -347,6 +326,16 @@ public class Network {
 		}
 	}
 
+	private void printAccounting(Writer report, String author, String title, String s) throws IOException {
+		report.write("\tAccounting -- author = '");
+		report.write(author);
+		report.write("' -- title = '");
+		report.write(title);
+		report.write("'\n");
+		report.write(s);
+		report.flush();
+	}
+
 	/**
 	 * Return a printable representation of #receiver.
 	 */
@@ -362,30 +351,34 @@ public class Network {
 	public void printOn(StringBuffer buf) {
 		Node currentNode = firstNode;
 		do {
-			switch (currentNode.type) {
-			case Node.NODE:
-				buf.append("Node ");
-				buf.append(currentNode.name);
-				buf.append(" [Node]");
-				break;
-			case Node.WORKSTATION:
-				buf.append("Workstation ");
-				buf.append(currentNode.name);
-				buf.append(" [Workstation]");
-				break;
-			case Node.PRINTER:
-				buf.append("Printer ");
-				buf.append(currentNode.name);
-				buf.append(" [Printer]");
-				break;
-			default:
-				buf.append("(Unexpected)");
-				break;
-			}
+			printNodeType(buf, currentNode);
 			buf.append(" -> ");
 			currentNode = currentNode.nextNode;
 		} while (currentNode != firstNode);
 		buf.append(" ... ");
+	}
+
+	private void printNodeType(StringBuffer buf, Node currentNode) {
+		switch (currentNode.type) {
+		case Node.NODE:
+			buf.append("Node ");
+			buf.append(currentNode.name);
+			buf.append(" [Node]");
+			break;
+		case Node.WORKSTATION:
+			buf.append("Workstation ");
+			buf.append(currentNode.name);
+			buf.append(" [Workstation]");
+			break;
+		case Node.PRINTER:
+			buf.append("Printer ");
+			buf.append(currentNode.name);
+			buf.append(" [Printer]");
+			break;
+		default:
+			buf.append("(Unexpected)");
+			break;
+		}
 	}
 
 	/**
@@ -398,26 +391,7 @@ public class Network {
 		buf.append("\n\n<UL>");
 		do {
 			buf.append("\n\t<LI> ");
-			switch (currentNode.type) {
-			case Node.NODE:
-				buf.append("Node ");
-				buf.append(currentNode.name);
-				buf.append(" [Node]");
-				break;
-			case Node.WORKSTATION:
-				buf.append("Workstation ");
-				buf.append(currentNode.name);
-				buf.append(" [Workstation]");
-				break;
-			case Node.PRINTER:
-				buf.append("Printer ");
-				buf.append(currentNode.name);
-				buf.append(" [Printer]");
-				break;
-			default:
-				buf.append("(Unexpected)");
-				break;
-			}
+			printNodeType(buf, currentNode);
 			buf.append(" </LI>");
 			currentNode = currentNode.nextNode;
 		} while (currentNode != firstNode);

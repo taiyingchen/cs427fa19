@@ -9,33 +9,75 @@ Explain the code smell in each example with 1 or 2 sentences.
 
 Answer to Q1
 ============
-We found the following code smell(s): <CODE_SMELL_NAME_1>, <CODE_SMELL_NAME_2>...
+We found the following code smell(s): Duplicated Code, Long Method
 
 Here are some example(s) of each code smell: 
 
-Name: <CODE_SMELL_NAME_1>
+Name: Duplicated Code
 
-Example 1: <EXPLANATION_FOR_EXAMPLE_1>
+Example 1: The method printLogging can be extracted from multiple copies of code that prints the current node information and that it passed the packet onward.
 Code: 
-	<CODE_OF_EXAMPLE_1>
+	try {
+		report.write("\tNode '");
+		report.write(currentNode.name);
+		report.write("' passes packet on.\n");
+		report.flush();
+	} catch (IOException exc) {
+		// just ignore
+	}
 
-Example 2: <EXPLANATION_FOR_EXAMPLE_2>
+Example 2: The method printAccounting can be extracted from multiple copies of code that prints the accounting information.
 Code: 
-	<CODE_OF_EXAMPLE_2>
+	report.write("\tAccounting -- author = '");
+	report.write(author);
+	report.write("' -- title = '");
+	report.write(title);
+	report.write("'\n");
+	report.write(str4);
+	report.flush();
 
-...
+Example 3: The method printNodeType can be extracted from multiple copies of code that prints the current node's information using a switch case based on the type.
+Code: 
+	switch (currentNode.type) {
+	case Node.NODE:
+		buf.append("Node ");
+		buf.append(currentNode.name);
+		buf.append(" [Node]");
+		break;
+	case Node.WORKSTATION:
+		buf.append("Workstation ");
+		buf.append(currentNode.name);
+		buf.append(" [Workstation]");
+		break;
+	case Node.PRINTER:
+		buf.append("Printer ");
+		buf.append(currentNode.name);
+		buf.append(" [Printer]");
+		break;
+	default:
+		buf.append("(Unexpected)");
+		break;
+	}
 	
-Name: <CODE_SMELL_NAME_2>
+Name: Long Method
 
-Example 1: <EXPLANATION_FOR_EXAMPLE_1>
+Example 1: The method checkDestination can be extracted from requestWorkstationPrintsDocument to reduce it's lengthiness. requestWorkstationPrintsDocument can now just return the result given from the checkDestination method. 
 Code: 
-	<CODE_OF_EXAMPLE_1>
+	boolean result;
+	if (packet.destination.equals(currentNode.name)) {
+		result = printDocument(currentNode, packet, report);
+	} else {
+		try {
+			report.write(">>> Destination not found, print job canceled.\n\n");
+			report.flush();
+		} catch (IOException exc) {
+			// just ignore
+		}
 
-Example 2: <EXPLANATION_FOR_EXAMPLE_2>
-Code: 
-	<CODE_OF_EXAMPLE_2>
+		result = false;
+	}
 
-...
+	return result;
 
 Answer to Q2
 ============
