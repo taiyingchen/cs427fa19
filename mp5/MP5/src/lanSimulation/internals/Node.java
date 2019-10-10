@@ -87,4 +87,8 @@ public class Node {
 			// just ignore
 		}
 	}
+
+	public byte getType() {
+		return type;
+	}
 }

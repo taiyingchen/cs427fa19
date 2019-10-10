@@ -94,7 +94,7 @@ public class Network {
 		if (n == null) {
 			return false;
 		} else {
-			return n.type == Node.WORKSTATION;
+			return n.getType() == Node.WORKSTATION;
 		}
 	}
 
@@ -121,7 +121,7 @@ public class Network {
 		enumeration = workstations.elements();
 		while (enumeration.hasMoreElements()) {
 			currentNode = enumeration.nextElement();
-			if (currentNode.type != Node.WORKSTATION) {
+			if (currentNode.getType() != Node.WORKSTATION) {
 				return false;
 			}
 		}
@@ -131,10 +131,10 @@ public class Network {
 		currentNode = firstNode;
 		while (!encountered.containsKey(currentNode.name)) {
 			encountered.put(currentNode.name, currentNode);
-			if (currentNode.type == Node.WORKSTATION) {
+			if (currentNode.getType() == Node.WORKSTATION) {
 				workstationsFound++;
 			}
-			if (currentNode.type == Node.PRINTER) {
+			if (currentNode.getType() == Node.PRINTER) {
 				printersFound++;
 			}
 			currentNode = currentNode.nextNode;
@@ -181,7 +181,7 @@ public class Network {
 			currentNode.printLogging(report, "' passes packet on.\n");
 
 			currentNode = currentNode.nextNode;
-		} while (!packet.destination.equals(currentNode.name));
+		} while (!packet.atDestination(currentNode));
 
 		try {
 			report.write(">>> Broadcast traveled whole token ring.\n\n");
@@ -226,11 +226,6 @@ public class Network {
 			// just ignore
 		}
 
-		return checkDestination(workstation, document, printer, report);
-	}
-
-	private boolean checkDestination(String workstation, String document, String printer, Writer report) {
-		boolean result = false;
 		Node startNode, currentNode;
 		Packet packet = new Packet(document, workstation, printer);
 
@@ -239,14 +234,19 @@ public class Network {
 		startNode.printLogging(report, "' passes packet on.\n");
 
 		currentNode = startNode.nextNode;
-		while ((!packet.destination.equals(currentNode.name))
-				& (!packet.origin.equals(currentNode.name))) {
+		while ((!packet.atDestination(currentNode))
+				& (!packet.atOrigin(currentNode))) {
 			currentNode.printLogging(report, "' passes packet on.\n");
 
 			currentNode = currentNode.nextNode;
 		}
 
-		if (packet.destination.equals(currentNode.name)) {
+		return checkDestination(report, currentNode, packet);
+	}
+
+	private boolean checkDestination(Writer report, Node currentNode, Packet packet) {
+		boolean result;
+		if (packet.atDestination(currentNode)) {
 			result = packet.printDocument(currentNode, report);
 		} else {
 			try {
@@ -258,6 +258,7 @@ public class Network {
 
 			result = false;
 		}
+
 		return result;
 	}
 
@@ -284,7 +285,7 @@ public class Network {
 	}
 
 	private void printNodeType(StringBuffer buf, Node currentNode) {
-		switch (currentNode.type) {
+		switch (currentNode.getType()) {
 		case Node.NODE:
 			buf.append("Node ");
 			buf.append(currentNode.name);
@@ -332,7 +333,7 @@ public class Network {
 		buf.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n\n<network>");
 		do {
 			buf.append("\n\t");
-			switch (currentNode.type) {
+			switch (currentNode.getType()) {
 			case Node.NODE:
 				buf.append("<node>");
 				buf.append(currentNode.name);

@@ -123,4 +123,12 @@ public class Packet {
         report.write(s);
         report.flush();
     }
+
+    public boolean atDestination(Node currentNode) {
+        return destination.equals(currentNode.name);
+    }
+
+    public boolean atOrigin(Node currentNode) {
+        return origin.equals(currentNode.name);
+    }
 }

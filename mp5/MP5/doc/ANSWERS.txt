@@ -94,24 +94,41 @@ Code:
 
 Example 2: The printDocument method is also one that accesses attributes from two faraway classes, yet does not access its own attributes.
 Code: 
-	startPos = document.message.indexOf("author:");
-	if (startPos >= 0) {
-		endPos = document.message.indexOf(".", startPos + 7);
-		if (endPos < 0) {
-			endPos = document.message.length();
+	boolean result;
+	if (packet.destination.equals(currentNode.name)) {
+		result = packet.printDocument(currentNode, report);
+	} else {
+		try {
+			report.write(">>> Destination not found, print job canceled.\n\n");
+			report.flush();
+		} catch (IOException exc) {
+			// just ignore
 		}
 
-		author = document.message.substring(startPos + 7,
-				endPos);
+		result = false;
 	}
 
 Answer to Q3
 ============
-We found the following code smell(s): <CODE_SMELL_NAME_1>, <CODE_SMELL_NAME_2>...
+We found the following code smell(s): Data class
 
-Here are some example(s) of each code smell: 
-(same as Q1)
+Example 1: The Packet class only had public fields and not class specific methods. The checking of a destination can be handled in the packet class since it depends on information in the Packet class.
+Code: 
+    public boolean atDestination(Node currentNode) {
+        return destination.equals(currentNode.name);
+    }
 
+Example 2: The Packet class only had public fields and not class specific methods. The checking of the origin can be handled in the packet class since it depends on information in the Packet class.
+Code: 
+    public boolean atOrigin(Node currentNode) {
+        return origin.equals(currentNode.name);
+    }
+
+Example 3: The Node class only had public fields and not class specific methods. The getting of type can be handled in the node class since it depends on information in the Node class.
+Code: 
+	public byte getType() {
+		return type;
+	}
 
 Answer to Q4
 ============
