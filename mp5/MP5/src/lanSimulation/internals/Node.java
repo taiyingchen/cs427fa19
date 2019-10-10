@@ -42,10 +42,6 @@ public class Node {
 	public static final byte PRINTER = 2;
 
 	/**
-	 * Holds the type of the Node.
-	 */
-	public byte type;
-	/**
 	 * Holds the name of the Node.
 	 */
 	public String name;
@@ -56,25 +52,27 @@ public class Node {
 	 */
 	public Node nextNode;
 
+	public String className;
+
 	/**
 	 * Construct a <em>Node</em> with given #type and #name.
 	 */
-	public Node(byte _type, String _name) {
-		assert (_type >= NODE) & (_type <= PRINTER);
-		type = _type;
+
+
+	public Node(String _name) {
 		name = _name;
 		nextNode = null;
+		className = "Node";
 	}
 
 	/**
 	 * Construct a <em>Node</em> with given #type and #name, and which is linked
 	 * to #nextNode.
 	 */
-	public Node(byte _type, String _name, Node _nextNode) {
-		assert (_type >= NODE) & (_type <= PRINTER);
-		type = _type;
+	public Node(String _name, Node _nextNode) {
 		name = _name;
 		nextNode = _nextNode;
+		className = "Node";
 	}
 
 	public void printLogging(Writer report, String s) {
@@ -88,7 +86,15 @@ public class Node {
 		}
 	}
 
-	public byte getType() {
-		return type;
+	public void printXMLOn(StringBuffer buf) {
+		buf.append(String.format("<%s>", className.toLowerCase()));
+		buf.append(name);
+		buf.append(String.format("</%s>", className.toLowerCase()));
+	}
+
+	public void printNodeType(StringBuffer buf) {
+		buf.append(String.format("%s ", className));
+		buf.append(name);
+		buf.append(String.format(" [%s]", className));
 	}
 }

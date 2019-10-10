@@ -65,10 +65,10 @@ public class Network {
 	public static Network DefaultExample() {
 		Network network = new Network(2);
 
-		Node wsFilip = new Node(Node.WORKSTATION, "Filip");
-		Node n1 = new Node(Node.NODE, "n1");
-		Node wsHans = new Node(Node.WORKSTATION, "Hans");
-		Node prAndy = new Node(Node.PRINTER, "Andy");
+		Workstation wsFilip = new Workstation("Filip");
+		Node n1 = new Node("n1");
+        Workstation wsHans = new Workstation("Hans");
+		Printer prAndy = new Printer("Andy");
 
 		wsFilip.nextNode = n1;
 		n1.nextNode = wsHans;
@@ -94,7 +94,7 @@ public class Network {
 		if (n == null) {
 			return false;
 		} else {
-			return n.getType() == Node.WORKSTATION;
+			return n instanceof Workstation;
 		}
 	}
 
@@ -121,7 +121,7 @@ public class Network {
 		enumeration = workstations.elements();
 		while (enumeration.hasMoreElements()) {
 			currentNode = enumeration.nextElement();
-			if (currentNode.getType() != Node.WORKSTATION) {
+			if (! (currentNode instanceof Workstation)) {
 				return false;
 			}
 		}
@@ -131,10 +131,10 @@ public class Network {
 		currentNode = firstNode;
 		while (!encountered.containsKey(currentNode.name)) {
 			encountered.put(currentNode.name, currentNode);
-			if (currentNode.getType() == Node.WORKSTATION) {
+			if (currentNode instanceof Workstation) {
 				workstationsFound++;
 			}
-			if (currentNode.getType() == Node.PRINTER) {
+			if (currentNode instanceof Printer) {
 				printersFound++;
 			}
 			currentNode = currentNode.nextNode;
@@ -277,34 +277,11 @@ public class Network {
 	public void printOn(StringBuffer buf) {
 		Node currentNode = firstNode;
 		do {
-			printNodeType(buf, currentNode);
+			currentNode.printNodeType(buf);
 			buf.append(" -> ");
 			currentNode = currentNode.nextNode;
 		} while (currentNode != firstNode);
 		buf.append(" ... ");
-	}
-
-	private void printNodeType(StringBuffer buf, Node currentNode) {
-		switch (currentNode.getType()) {
-		case Node.NODE:
-			buf.append("Node ");
-			buf.append(currentNode.name);
-			buf.append(" [Node]");
-			break;
-		case Node.WORKSTATION:
-			buf.append("Workstation ");
-			buf.append(currentNode.name);
-			buf.append(" [Workstation]");
-			break;
-		case Node.PRINTER:
-			buf.append("Printer ");
-			buf.append(currentNode.name);
-			buf.append(" [Printer]");
-			break;
-		default:
-			buf.append("(Unexpected)");
-			break;
-		}
 	}
 
 	/**
@@ -317,7 +294,7 @@ public class Network {
 		buf.append("\n\n<UL>");
 		do {
 			buf.append("\n\t<LI> ");
-			printNodeType(buf, currentNode);
+			currentNode.printNodeType(buf);
 			buf.append(" </LI>");
 			currentNode = currentNode.nextNode;
 		} while (currentNode != firstNode);
@@ -333,26 +310,7 @@ public class Network {
 		buf.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n\n<network>");
 		do {
 			buf.append("\n\t");
-			switch (currentNode.getType()) {
-			case Node.NODE:
-				buf.append("<node>");
-				buf.append(currentNode.name);
-				buf.append("</node>");
-				break;
-			case Node.WORKSTATION:
-				buf.append("<workstation>");
-				buf.append(currentNode.name);
-				buf.append("</workstation>");
-				break;
-			case Node.PRINTER:
-				buf.append("<printer>");
-				buf.append(currentNode.name);
-				buf.append("</printer>");
-				break;
-			default:
-				buf.append("<unknown></unknown>");
-				break;
-			}
+			currentNode.printXMLOn(buf);
 			currentNode = currentNode.nextNode;
 		} while (currentNode != firstNode);
 		buf.append("\n</network>");
