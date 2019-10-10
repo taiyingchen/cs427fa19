@@ -97,4 +97,12 @@ public class Node {
 		buf.append(name);
 		buf.append(String.format(" [%s]", className));
 	}
+
+	public String getName() {
+		return name;
+	}
+
+	public Node getNextNode() {
+		return nextNode;
+	}
 }

@@ -1,135 +1,269 @@
-Illini = mukhilm2, tychen2
-
-Instruction
-============
-List at least 1 code smell for each question.
-List at least 1 code example for each code smell.
-Explain the code smell in each example with 1 or 2 sentences. 
-(e.g. the process of ... appears 2 times in ... method.)
-
-Answer to Q1
-============
-We found the following code smell(s): Duplicated Code, Long Method
-
-Here are some example(s) of each code smell: 
-
-Name: Duplicated Code
-
-Example 1: The method printLogging can be extracted from multiple copies of code that prints the current node information and that it passed the packet onward.
-Code: 
-	try {
-		report.write("\tNode '");
-		report.write(currentNode.name);
-		report.write("' passes packet on.\n");
-		report.flush();
-	} catch (IOException exc) {
-		// just ignore
-	}
-
-Example 2: The method printAccounting can be extracted from multiple copies of code that prints the accounting information.
-Code: 
-	report.write("\tAccounting -- author = '");
-	report.write(author);
-	report.write("' -- title = '");
-	report.write(title);
-	report.write("'\n");
-	report.write(str4);
-	report.flush();
-
-Example 3: The method printNodeType can be extracted from multiple copies of code that prints the current node's information using a switch case based on the type.
-Code: 
-	switch (currentNode.type) {
-	case Node.NODE:
-		buf.append("Node ");
-		buf.append(currentNode.name);
-		buf.append(" [Node]");
-		break;
-	case Node.WORKSTATION:
-		buf.append("Workstation ");
-		buf.append(currentNode.name);
-		buf.append(" [Workstation]");
-		break;
-	case Node.PRINTER:
-		buf.append("Printer ");
-		buf.append(currentNode.name);
-		buf.append(" [Printer]");
-		break;
-	default:
-		buf.append("(Unexpected)");
-		break;
-	}
-	
-Name: Long Method
-
-Example 1: The method checkDestination can be extracted from requestWorkstationPrintsDocument to reduce it's lengthiness. requestWorkstationPrintsDocument can now just return the result given from the checkDestination method. 
-Code: 
-	boolean result;
-	if (packet.destination.equals(currentNode.name)) {
-		result = printDocument(currentNode, packet, report);
-	} else {
-		try {
-			report.write(">>> Destination not found, print job canceled.\n\n");
-			report.flush();
-		} catch (IOException exc) {
-			// just ignore
-		}
-
-		result = false;
-	}
-
-	return result;
-
-Answer to Q2
-============
-We found the following code smell(s): Feature envy
-
-Here are some example(s) of each code smell: 
-
-Name: Feature envy
-
-Example 1: The printLogging method can be created from loggin code that does not belong in Network because most of the data it accesses belongs in another class.
-Code: 
+Illini = mukhilm2, tychen2
+
+
+
+Instruction
+
+============
+
+List at least 1 code smell for each question.
+
+List at least 1 code example for each code smell.
+
+Explain the code smell in each example with 1 or 2 sentences. 
+
+(e.g. the process of ... appears 2 times in ... method.)
+
+
+
+Answer to Q1
+
+============
+
+We found the following code smell(s): Duplicated Code, Long Method
+
+
+
+Here are some example(s) of each code smell: 
+
+
+
+Name: Duplicated Code
+
+
+
+Example 1: The method printLogging can be extracted from multiple copies of code that prints the current node information and that it passed the packet onward.
+
+Code: 
+
+	try {
+
+		report.write("\tNode '");
+
+		report.write(currentNode.name);
+
+		report.write("' passes packet on.\n");
+
+		report.flush();
+
+	} catch (IOException exc) {
+
+		// just ignore
+
+	}
+
+
+
+Example 2: The method printAccounting can be extracted from multiple copies of code that prints the accounting information.
+
+Code: 
+
+	report.write("\tAccounting -- author = '");
+
+	report.write(author);
+
+	report.write("' -- title = '");
+
+	report.write(title);
+
+	report.write("'\n");
+
+	report.write(str4);
+
+	report.flush();
+
+
+
+Example 3: The method printNodeType can be extracted from multiple copies of code that prints the current node's information using a switch case based on the type.
+
+Code: 
+
+	switch (currentNode.type) {
+
+	case Node.NODE:
+
+		buf.append("Node ");
+
+		buf.append(currentNode.name);
+
+		buf.append(" [Node]");
+
+		break;
+
+	case Node.WORKSTATION:
+
+		buf.append("Workstation ");
+
+		buf.append(currentNode.name);
+
+		buf.append(" [Workstation]");
+
+		break;
+
+	case Node.PRINTER:
+
+		buf.append("Printer ");
+
+		buf.append(currentNode.name);
+
+		buf.append(" [Printer]");
+
+		break;
+
+	default:
+
+		buf.append("(Unexpected)");
+
+		break;
+
+	}
+
+	
+
+Name: Long Method
+
+
+
+Example 1: The method checkDestination can be extracted from requestWorkstationPrintsDocument to reduce it's lengthiness. requestWorkstationPrintsDocument can now just return the result given from the checkDestination method. 
+
+Code: 
+
+	boolean result;
+
+	if (packet.destination.equals(currentNode.name)) {
+
+		result = printDocument(currentNode, packet, report);
+
+	} else {
+
+		try {
+
+			report.write(">>> Destination not found, print job canceled.\n\n");
+
+			report.flush();
+
+		} catch (IOException exc) {
+
+			// just ignore
+
+		}
+
+
+
+		result = false;
+
+	}
+
+
+
+	return result;
+
+
+
+Answer to Q2
+
+============
+
+We found the following code smell(s): Feature envy
+
+
+
+Here are some example(s) of each code smell: 
+
+
+
+Name: Feature envy
+
+
+
+Example 1: The printLogging method can be created from loggin code that does not belong in Network because most of the data it accesses belongs in another class.
+
+Code: 
+
 	report.write("\tNode '");
 	report.write(currentNode.name);
-	report.write("' accepts broadcast packet.\n");
+	report.write("' accepts broadcast packet.\n");
+
 	report.write("\tNode '");
         report.write(currentNode.name);
         report.write("' passes packet on.\n");
-        report.flush();
-
-Example 2: The printDocument method is also one that accesses attributes from two faraway classes, yet does not access its own attributes.
-Code: 
-	private boolean printDocument(Node printer, Packet document, Writer report)
-
-Answer to Q3
-============
-We found the following code smell(s): Data class
-
-Here are some example(s) of each code smell:
-
-Name: Data class
-
-Example 1: The Packet class only had public fields and not class specific methods. The checking of a destination can be handled in the packet class since it depends on information in the Packet class.
-Code: 
-    packet.destination.equals(currentNode.name)
-
-Example 2: The Packet class only had public fields and not class specific methods. The checking of the origin can be handled in the packet class since it depends on information in the Packet class.
-Code: 
+        report.flush();
+
+
+
+Example 2: The printDocument method is also one that accesses attributes from two faraway classes, yet does not access its own attributes.
+
+Code: 
+
+	private boolean printDocument(Node printer, Packet document, Writer report)
+
+Example 3: Instead of accessing external class fields we can add a getter method to the Node class
+Code: 
+
+	currentNode.name
+
+Example 4: Instead of accessing external class fields we can add a getter method to the Node class
+Code: 
+
+	currentNode = currentNode.nextNode
+
+Answer to Q3
+
+============
+
+We found the following code smell(s): Data class
+
+
+
+Here are some example(s) of each code smell:
+
+
+
+Name: Data class
+
+
+
+Example 1: The Packet class only had public fields and not class specific methods. The checking of a destination can be handled in the packet class since it depends on information in the Packet class.
+
+Code: 
+
+    packet.destination.equals(currentNode.name)
+
+
+
+Example 2: The Packet class only had public fields and not class specific methods. The checking of the origin can be handled in the packet class since it depends on information in the Packet class.
+
+Code: 
+
     packet.origin.equals(currentNode.name)
-
-Example 3: The Node class only had public fields and not class specific methods. The getting of type can be handled in the node class since it depends on information in the Node class.
-Code: 
-	currentNode.type
-
-Answer to Q4
-============
-We found the following code smell(s): Switch Statement
-
-Here are some example(s) of each code smell:
-
-Name: Switch Statement
-Example 1: The printOn method uses a switch case that can be split into subclasses for each case
-Code: 
+
+
+Example 3: The Node class only had public fields and not class specific methods. The getting of type can be handled in the node class since it depends on information in the Node class.
+
+Code: 
+
+	currentNode.type
+
+
+
+Answer to Q4
+
+============
+
+We found the following code smell(s): Switch Statement
+
+
+
+Here are some example(s) of each code smell:
+
+
+
+Name: Switch Statement
+
+Example 1: The printOn method uses a switch case that can be split into subclasses for each case
+
+Code: 
+
     switch (currentNode.getType()) {
         case Node.NODE:
             buf.append("Node ");
@@ -149,9 +283,12 @@ Code:
         default:
             buf.append("(Unexpected)");
             break;
-        }
-
-Example 2: The printHTMLOn method uses a switch case that can be split into subclasses for each case
+        }
+
+
+
+Example 2: The printHTMLOn method uses a switch case that can be split into subclasses for each case
+
 Code: 
 	switch (currentNode.getType()) {
         case Node.NODE:
@@ -172,10 +309,14 @@ Code:
         default:
             buf.append("(Unexpected)");
             break;
-        }
-    
-Example 3: The printXMLOn method uses a switch case that can be split into subclasses for each case
-Code: 
+        }
+
+    
+
+Example 3: The printXMLOn method uses a switch case that can be split into subclasses for each case
+
+Code: 
+
     switch (currentNode.getType()) {
 	case Node.NODE:
 		buf.append("<node>");
@@ -195,4 +336,4 @@ Code:
 	default:
 		buf.append("<unknown></unknown>");
 		break;
-    }
+    }

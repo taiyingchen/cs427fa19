@@ -130,14 +130,14 @@ public class Network {
 		// ring is circular
 		currentNode = firstNode;
 		while (!encountered.containsKey(currentNode.name)) {
-			encountered.put(currentNode.name, currentNode);
+			encountered.put(currentNode.getName(), currentNode);
 			if (currentNode instanceof Workstation) {
 				workstationsFound++;
 			}
 			if (currentNode instanceof Printer) {
 				printersFound++;
 			}
-			currentNode = currentNode.nextNode;
+			currentNode = currentNode.getNextNode();
 		}
 		if (currentNode != firstNode) {
 			return false;
@@ -154,7 +154,7 @@ public class Network {
 		return true;
 	}
 
-	/**
+    /**
 	 * The #receiver is requested to broadcast a message to all nodes. Therefore
 	 * #receiver sends a special broadcast packet across the token ring network,
 	 * which should be treated by all nodes.
@@ -180,7 +180,7 @@ public class Network {
 			currentNode.printLogging(report, "' accepts broadcast packet.\n");
 			currentNode.printLogging(report, "' passes packet on.\n");
 
-			currentNode = currentNode.nextNode;
+			currentNode = currentNode.getNextNode();
 		} while (!packet.atDestination(currentNode));
 
 		try {
@@ -192,7 +192,7 @@ public class Network {
 		return true;
 	}
 
-	/**
+    /**
 	 * The #receiver is requested by #workstation to print #document on
 	 * #printer. Therefore #receiver sends a packet across the token ring
 	 * network, until either (1) #printer is reached or (2) the packet traveled
@@ -233,12 +233,12 @@ public class Network {
 
 		startNode.printLogging(report, "' passes packet on.\n");
 
-		currentNode = startNode.nextNode;
+		currentNode = startNode.getNextNode();
 		while ((!packet.atDestination(currentNode))
 				& (!packet.atOrigin(currentNode))) {
 			currentNode.printLogging(report, "' passes packet on.\n");
 
-			currentNode = currentNode.nextNode;
+			currentNode = currentNode.getNextNode();
 		}
 
 		return checkDestination(report, currentNode, packet);
@@ -279,7 +279,7 @@ public class Network {
 		do {
 			currentNode.printNodeType(buf);
 			buf.append(" -> ");
-			currentNode = currentNode.nextNode;
+			currentNode = currentNode.getNextNode();
 		} while (currentNode != firstNode);
 		buf.append(" ... ");
 	}
@@ -296,7 +296,7 @@ public class Network {
 			buf.append("\n\t<LI> ");
 			currentNode.printNodeType(buf);
 			buf.append(" </LI>");
-			currentNode = currentNode.nextNode;
+			currentNode = currentNode.getNextNode();
 		} while (currentNode != firstNode);
 		buf.append("\n\t<LI>...</LI>\n</UL>\n\n</BODY>\n</HTML>\n");
 	}
@@ -311,7 +311,7 @@ public class Network {
 		do {
 			buf.append("\n\t");
 			currentNode.printXMLOn(buf);
-			currentNode = currentNode.nextNode;
+			currentNode = currentNode.getNextNode();
 		} while (currentNode != firstNode);
 		buf.append("\n</network>");
 	}
